@@ -1,5 +1,5 @@
 #SRR fixed effects model
-library(Matrix)
+
 SRR_fixed <- function(data0, Y_name, z_names, Fac_name, test = "Score", refer_fac = NULL,
                       criterion = 1e-8, max.iter = 500, bound = 8, size_cut = 10){
   Yid <- match(Y_name, colnames(data0))
@@ -9,29 +9,17 @@ SRR_fixed <- function(data0, Y_name, z_names, Fac_name, test = "Score", refer_fa
   
   zid <- match(z_names, colnames(data0))
   if(length(which(is.na(zid)))>0){
-    stop(paste("Error: Can not find ", z_names[which(is.na(zid))], " in the data!", sep=""))
+    stop(paste("Can not find ", z_names[which(is.na(zid))], " in the data!", sep=""))
   }
   
   Facid <- match(Fac_name, colnames(data0))
   if(is.na(Facid)){
-    stop(paste("Error: Can not find ", Fac_name, " in the data!", sep=""))
+    stop(paste("Can not find ", Fac_name, " in the data!", sep=""))
   }
   if(sum(is.na(data0[,Facid]))>0){
-    stop("Error: You have missingness in your Facility variable")
+    stop("You have missingness in your Facility variable")
   }
-  Zmis_index=which(apply(data0[, zid],2,function(x) sum(is.na(x)))>0)
-  if(sum(is.na(data0[, zid]))>0){
-    print(paste0("Warning: You have missingness in your explanatory covariate: ",z_names[Zmis_index]))
-  }
-  var0_index<-which(apply(data0[, zid],2,var)==0)
-  if(length(var0_index)>0){
-    print(paste0("Warning: You have no variation in your variable: ",z_names[var0_index]))
-  }
-
-  Zmis_row_index<-which(apply(as.matrix(data0[, zid][,Zmis_index]),1,function(x) sum(is.na(x))>0))
-  if(rankMatrix(as.matrix(data0[, zid][-Zmis_row_index,]))<length(z_names)){
-    print(paste0("Warning: rank of the variables is less than the predictor numbers"))
-  }
+  
   
   z <- as.matrix(data0[,zid])
   tmp <- apply(z, 1, sum)
