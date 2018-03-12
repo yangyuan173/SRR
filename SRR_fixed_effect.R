@@ -1,5 +1,5 @@
 rm(list=ls())
-source('K:\\Projects\\CEC_Eval\\Code\\CUSUM_remodel\\SRR_fixed_effect_lib_LW_20180306.R')
+source('K:\\Projects\\CEC_Eval\\Code\\CUSUM_remodel\\SRR_fixed_effect_lib_LW_20180312.R')
 year <- 16
 read09<-read.csv(paste("K:\\Projects\\CEC_Eval\\Data\\Quarter8\\SRR\\SRRCUSUM\\q8_srr_cusum_", year, "_021618.csv", sep=""), header=TRUE, na.strings=c(".", "na", " "), sep=",")
 read09$agelt25 <- read09$agelt15 + read09$age15_25
