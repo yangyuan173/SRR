@@ -94,15 +94,20 @@ SRR_fixed <- function(data0, Y_name, z_names, Fac_name, test = "Score", refer_fa
   if(is.null(refer_fac)){
     proposed_gamma = median(gamma.est)
   }else{
-    proposed_gamma = gamma.est[names(m2_cut) == refer_fac]
+    if(is.na(match(refer_fac, names(m2_cut)))){
+      warning(paste("Facility ", refer_fac,"is not suitable to be a reference facility. Therefore, median of facility effect is used as a reference."))
+    }else{
+      proposed_gamma = gamma.est[names(m2_cut) == refer_fac]
+    }  
   }
-  test_rslt = P_value_score_test(proposed_gamma, Y = Y_cut, z = z_cut, Fac_ind = Fac_cut, beta = beta.est)
+  ##consider deleted facilities
+  test_rslt = P_value_score_test(proposed_gamma, Y = Y_sort, z = z_sort, Fac_ind = Fac_sort, beta = beta.est)
   
-  Observed = as.numeric( sapply( split(Y_cut, factor(Fac_cut)),sum)) 
-  Expected =  as.numeric( sapply( split(plogis(proposed_gamma + z_cut%*%beta.est), factor(Fac_cut)),sum))#Amy changed Median gamma to reference gamma
+  Observed = as.numeric( sapply( split(Y_sort, factor(Fac_sort)),sum)) 
+  Expected =  as.numeric( sapply( split(plogis(proposed_gamma + z_sort%*%beta.est), factor(Fac_sort)),sum))#Amy changed Median gamma to reference gamma
   
   srr = Observed/Expected
-  names(srr) = sort(unique(Fac_cut))#split() with factor() will sort it-self
+  names(srr) = sort(unique(Fac_sort))
   smry = list(srr=srr, test_rslt = test_rslt, beta=beta.est, gamma = all_gamma, iterN=iterN, Observed=Observed, Expected=Expected, Fnames=all_Fac_names)
   return(smry)
 }
